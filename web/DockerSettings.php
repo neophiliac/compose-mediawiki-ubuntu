@@ -140,8 +140,8 @@ wfLoadExtension( 'TitleBlacklist' );
     ),
 );*/
 
-wfLoadExtension( 'SyntaxHighlight_GeSHi' );
-$wgPygmentizePath = '/usr/bin/pygmentize';
+// wfLoadExtension( 'SyntaxHighlight_GeSHi' );
+// $wgPygmentizePath = '/usr/bin/pygmentize';
 
 wfLoadExtension( 'Interwiki' );
 $wgGroupPermissions['sysop']['interwiki'] = true;

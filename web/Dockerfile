@@ -36,7 +36,7 @@ RUN set -x; \
     && rm /var/www/html/index.html \
     && rm -rf /etc/apache2/sites-enabled/*
 
-ENV MW_VERSION=REL1_29 \
+ENV MW_VERSION=REL1_30 \
     MW_HOME=/var/www/html/w \
     MW_VOLUME=/mediawiki \
     WWW_USER=www-data \
@@ -90,20 +90,22 @@ RUN set -x; \
     && git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/p/mediawiki/extensions/CiteThisPage
 
 # SyntaxHighlight_GeSHi
-RUN set -x; \
-    cd $MW_HOME/extensions \
-    && git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/p/mediawiki/extensions/SyntaxHighlight_GeSHi \
-    && cd SyntaxHighlight_GeSHi \
-    && composer install --no-dev \
-    && chmod a+x pygments/pygmentize \
-    && cd ..
+# RUN set -x; \
+#     cd $MW_HOME/extensions \
+#     && git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/p/mediawiki/extensions/SyntaxHighlight_GeSHi \
+#     && cd SyntaxHighlight_GeSHi \
+#     && composer install --no-dev \
+#     && chmod a+x pygments/pygmentize \
+#     && cd ..
 
 ##### Commonly used extensions
 RUN set -x; \
     cd $MW_HOME/extensions \
     && git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/p/mediawiki/extensions/Echo \
     && git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/p/mediawiki/extensions/Thanks \
-    && git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/p/mediawiki/extensions/CheckUser
+    && git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/p/mediawiki/extensions/CheckUser \
+    && git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/extensions/googleAnalytics \
+    && git clone --depth 1 https://github.com/tinymighty/wiki-seo.git WikiSEO
 
 # Flow extension
 RUN set -x; \
