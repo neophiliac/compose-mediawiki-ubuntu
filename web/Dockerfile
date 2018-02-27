@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM ubuntu:16.04 as mwbuild
 
 MAINTAINER pastakhov@yandex.ru
 
@@ -26,6 +26,8 @@ RUN set -x; \
         netcat \
         git \
         composer \
+        ack-grep \
+        vim-tiny \
         unzip \
         mysql-client \
         wget \
@@ -67,7 +69,8 @@ RUN set -x; \
     && git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/skins/Vector \
     && git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/skins/Modern \
     && git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/skins/MonoBook \
-    && git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/skins/CologneBlue
+    && git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/mediawiki/skins/CologneBlue \
+    && git clone --depth 1 https://neophiliac@bitbucket.org/nischayn22/bakerpedia.git Bakerpedia
 
 ##### Bundled extensions, see https://www.mediawiki.org/wiki/Bundled_extensions
 RUN set -x; \
@@ -165,7 +168,7 @@ ENV MW_AUTOUPDATE=true \
     MW_SCRIPT_CLDR_REBUILD=1 \
     MW_SITE_NAME=My\ MediaWiki\ Site \
     MW_SITE_LANG=en \
-    MW_DEFAULT_SKIN=vector \
+    MW_DEFAULT_SKIN=bakerpedia \
     MW_MAIN_CACHE_TYPE=CACHE_ACCEL \
     MW_REST_DOMAIN=localhost \
     MW_REST_RESTBASE_PROXY_PATH=/api/rest_ \
@@ -173,8 +176,6 @@ ENV MW_AUTOUPDATE=true \
     MW_SHOW_EXCEPTION_DETAILS=true \
     PHP_LOG_ERRORS=On \
     PHP_ERROR_REPORTING=E_ALL
-
-EXPOSE 80
 
 COPY php.ini /etc/php/7.0/apache2/conf.d/mediawiki.ini
 
@@ -190,6 +191,34 @@ COPY favicon.ico $MW_HOME/favicon.ico
 COPY logo.png $MW_HOME/logo.png
 COPY CustomSettings.php $MW_HOME/CustomSettings.php
 
-CMD ["/run-apache.sh"]
+# flatten layers to cut container size
+FROM ubuntu:16.04
+COPY --from=mwbuild / /
+EXPOSE 80
 
+# repeat env from above (why is this necessary?)
+ENV MW_VERSION=REL1_30 \
+    MW_HOME=/var/www/html/w \
+    MW_VOLUME=/mediawiki \
+    WWW_USER=www-data \
+    WWW_GROUP=www-data \
+    APACHE_LOG_DIR=/var/log/apache2 \
+    MW_AUTOUPDATE=true \
+    MW_MAINTENANCE_UPDATE=3 \
+    MW_MAINTENANCE_CIRRUSSEARCH_UPDATECONFIG=1 \
+    MW_MAINTENANCE_CIRRUSSEARCH_FORCEINDEX=1 \
+    MW_MAINTENANCE_ULS_INDEXER=1 \
+    MW_SCRIPT_CLDR_REBUILD=1 \
+    MW_SITE_NAME=My\ MediaWiki\ Site \
+    MW_SITE_LANG=en \
+    MW_DEFAULT_SKIN=bakerpedia \
+    MW_MAIN_CACHE_TYPE=CACHE_ACCEL \
+    MW_REST_DOMAIN=localhost \
+    MW_REST_RESTBASE_PROXY_PATH=/api/rest_ \
+    MW_REST_RESTBASE_PORT=7231 \
+    MW_SHOW_EXCEPTION_DETAILS=true \
+    PHP_LOG_ERRORS=On \
+    PHP_ERROR_REPORTING=E_ALL
+
+CMD ["/run-apache.sh"]
 VOLUME ["$MW_HOME/images", "$MW_VOLUME"]
