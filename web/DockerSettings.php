@@ -256,6 +256,7 @@ wfLoadExtension('MultimediaViewer');
 ######################### MobileFrontend ##########################
 wfLoadExtension( 'MobileFrontend' );
 $wgMFAutodetectMobileView = true;
+$wgMFDefaultSkinClass='SkinBakerpedia';
 
 ######################### ElectronPdfService ##########################
 wfLoadExtension('ElectronPdfService');
