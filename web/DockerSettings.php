@@ -117,6 +117,8 @@ wfLoadExtension( 'ParserFunctions' );
 wfLoadExtension( 'PdfHandler' );
 wfLoadExtension( 'Poem' );
 wfLoadExtension( 'Renameuser' );
+// wfLoadExtension( 'Widgets' );
+require_once "$IP/extensions/Widgets/Widgets.php";
 
 wfLoadExtension( 'SpamBlacklist' );
 /*$wgSpamBlacklistFiles = array(
@@ -196,6 +198,9 @@ if ( $tmpRestDomain && $tmpRestParsoidUrl ) {
 
     // Enable by default for everybody
     $wgDefaultUserOptions['visualeditor-enable'] = 1;
+
+    // allow VE to work with Bakerpedia skin
+    $wgVisualEditorSupportedSkins[] = 'bakerpedia';
 
     // Optional: Set VisualEditor as the default for anonymous users
     // otherwise they will have to switch to VE

@@ -127,6 +127,13 @@ RUN set -x; \
     && git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/p/mediawiki/extensions/CleanChanges \
     && git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/p/mediawiki/extensions/UniversalLanguageSelector
 
+##### Widgets extension
+RUN set -x; \
+    cd $MW_HOME/extensions \
+    && git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/p/mediawiki/extensions/Widgets.git \
+    && cd Widgets  \
+    && git submodule update --init
+
 ##### VisualEditor extension
 RUN set -x; \
     cd $MW_HOME/extensions \
